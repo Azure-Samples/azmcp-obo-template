@@ -10,7 +10,7 @@ az ad app permission add --id {entraAppId} --api {downstreamAppId} --api-permiss
 
 > Note: The Entra app ID can be found in the `azd env get-values` output. 
 
-Azure MCP has tools that access various kinds of downstream APIs. `Azure Resource Manager` and `Azure Storage` are the ones needed for its storage tools. If you aren't sure what downstream API you need for the tool you would like to use, checkout out this [API permission document](tbd) to see which API permissions you need to add for the Azure MCP tools you want to use.
+Azure MCP has tools that access various kinds of downstream APIs. `Azure Resource Manager` and `Azure Storage` are the ones needed for its storage tools. If you aren't sure what downstream API you need for the tool you would like to use, checkout out this [API permission document](https://github.com/microsoft/mcp/blob/main/servers/Azure.Mcp.Server/azd-templates/api-permissions.md) to see which API permissions you need to add for the Azure MCP tools you want to use.
 
 ## Grant admin consent for downstream API calls
 

@@ -102,7 +102,7 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
     template: {
       containers: [
         {
-          image: 'mcr.microsoft.com/azure-sdk/azure-mcp:2.0.0-beta.9' // Must be 2.0.0-beta.9 or beyond
+          image: 'mcr.microsoft.com/azure-sdk/azure-mcp:latest' // Must be 2.0.0-beta.9 or beyond
           name: containerAppName
           command: []
           args: serverArgs
