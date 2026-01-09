@@ -1,0 +1,10 @@
+# Known issues
+
+- Power Apps custom connector doesn't support authenticating users from multiple tenants. As a result, the client app registration must be configured to only accept users from its tenant.
+- As a part of the authentication flow, the user/tenant admin needs to give explicit consent to grant the client app access to their data. To learn more about the consent experience, refer to [application consent experience](https://learn.microsoft.com/entra/identity-platform/application-consent-experience). There are multiple ways to give consent to the client app.
+  - A user may give consent in the sign-in process just for this user. This may be prohibited by tenant security policy.
+  - A tenant admin may give consent for all users in the tenant in the client app registration under the `API permissions` blade in Azure Portal.
+  - The server app registration can add the client app registration as an pre-authorized client app under the `Expose an API` blade in Azure Portal.
+- If the client app registration and server app registration are in different tenants, you may see the following error when trying to create a customer connector connection.
+  - "The app is trying to access a service 'server_app_registration_client_id'(server_app_registration_display_name) that your organization 'client_app_registration_tenant' lacks a service principal for". In this case, a tenant admin of the client app registration must provision a service principal for the server app registration in that tenant. This can be done via an Azure CLI command `az ad sp create --id <server_app_registration_client_id>`. After the service principal is provisioned, trying to create the connection again should trigger the consent flow.
+- If the Power Apps environment has tenant isolation policy, it will block the data flow if the client app registration or the server app registration are in different tenants. To learn more about how to add exception rules to allow these data flow, refer to [cross tenant restrictions](https://learn.microsoft.com/power-platform/admin/cross-tenant-restrictions).
