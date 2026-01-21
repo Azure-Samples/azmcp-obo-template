@@ -40,7 +40,6 @@ var scopeId = guid(entraAppUniqueName, entraAppScopeValue)
 resource entraApp 'Microsoft.Graph/applications@v1.0' = {
   uniqueName: entraAppUniqueName 
   displayName: entraAppDisplayName
-  serviceManagementReference: 'a49bf0bf-6e3d-487d-8646-938d84115657'
   api: isServer ? {
     oauth2PermissionScopes: [
       {
