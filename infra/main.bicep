@@ -55,8 +55,18 @@ module entraAppServer 'modules/entra-app.bicep' = {
     entraAppScopeDisplayName: 'Azure MCP Storage Tools ReadWrite'
     entraAppScopeDescription: 'Azure MCP Storage Tools Permission to call tools'
     knownClientAppId: entraAppClient.outputs.entraAppClientId
+  }
+}
+
+module entraAppServerFederatedCredential 'modules/entra-app-federated-credential.bicep' = {
+  name: 'entra-app-server-federated-credential-deployment'
+  params: {
+    entraAppUniqueName: entraAppServerUniqueName
     acaManagedIdentityObjectId: acaStorageManagedIdentity.outputs.managedIdentityPrincipalId
   }
+  dependsOn: [
+    entraAppServer
+  ]
 }
 
 // Deploy ACA Infrastructure to host Azure MCP Server

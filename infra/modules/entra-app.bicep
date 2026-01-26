@@ -32,9 +32,6 @@ param entraAppScopeDescription string = ''
 @description('Known client app id')
 param knownClientAppId string = ''
 
-@description('Object ID of the container app user assigned managed identity')
-param acaManagedIdentityObjectId string = ''
-
 var scopeId = guid(entraAppUniqueName, entraAppScopeValue)
 
 resource entraApp 'Microsoft.Graph/applications@v1.0' = {
@@ -85,16 +82,6 @@ resource entraApp 'Microsoft.Graph/applications@v1.0' = {
       resourceAppId: 'e406a681-f3d4-42a8-90b6-c2b029497af1'
     }
   ] : []
-  
-  resource federatedIdentityCredential 'federatedIdentityCredentials@v1.0' = if (isServer) {
-    audiences: [
-      'api://AzureADTokenExchange'
-    ]
-    description: 'Client credential of Azure MCP server app registration'
-    issuer: '${environment().authentication.loginEndpoint}${tenant().tenantId}/v2.0'
-    name: 'ServerClientCredential'
-    subject: acaManagedIdentityObjectId
-  }
 }
 
 output entraAppClientId string = entraApp.appId
