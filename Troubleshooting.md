@@ -1,12 +1,14 @@
-# Troubleshooting the container app
+# Troubleshooting
 
 If the container app doesn't work as expected, here are a few tools to help diagnose what went wrong.
 
-## Container App Log Stream
+## Tools
+
+### Container App Log Stream
 
 In the Azure Portal, open your Container App resource → **Monitoring** → **Log stream** to view real-time app logs.
 
-## Entra Sign-in Logs
+### Entra Sign-in Logs
 
 The OBO token exchange appears in your tenant's sign-in logs. In the Azure Portal, go to **Microsoft Entra ID** → **Monitoring** → **Sign-in logs** → **User sign-ins (non-interactive)**. Look for entries where:
 
@@ -14,7 +16,7 @@ The OBO token exchange appears in your tenant's sign-in logs. In the Azure Porta
 - **Application** = your server app registration
 - **Resource** = the downstream API the MCP tool is accessing
 
-## Application Insights
+### Application Insights
 
 The template creates an Application Insights resource and wires it to the container app. Two ways to inspect telemetry:
 
@@ -34,6 +36,8 @@ If you'd like additional telemetry points for diagnosing issues, please [open an
 This means the server's OBO token exchange failed because **admin consent has not been granted** for the downstream API permissions on the server app registration.
 
 **Fix:** In the Azure Portal, find the server app registration (using `ENTRA_APP_SERVER_CLIENT_ID`) → **API permissions** → click **Grant admin consent** for all listed permissions (e.g. Azure Resource Manager, Azure Storage).
+
+> If the **Grant admin consent** button is greyed out or unavailable, your account lacks sufficient permissions. This sample requires an Azure subscription with **Owner** or **User Access Administrator** permissions.
 
 ### ServiceManagementReference field is required
 
