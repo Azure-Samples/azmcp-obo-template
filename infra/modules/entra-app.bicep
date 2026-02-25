@@ -86,6 +86,18 @@ resource entraApp 'Microsoft.Graph/applications@v1.0' = {
       resourceAppId: 'e406a681-f3d4-42a8-90b6-c2b029497af1'
     }
   ] : []
+  // For the client app, register redirect URI for InteractiveBrowserCredential (public client flow)
+  publicClient: !isServer ? {
+    redirectUris: [
+      'http://localhost'
+    ]
+  } : null
+  isFallbackPublicClient: !isServer
+}
+
+// Create a service principal for the app so it can be used for authentication in this tenant
+resource servicePrincipal 'Microsoft.Graph/servicePrincipals@v1.0' = {
+  appId: entraApp.appId
 }
 
 // Create federated identity credential for the server app (no 'existing' lookup needed
