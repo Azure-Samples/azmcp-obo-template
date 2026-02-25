@@ -35,12 +35,15 @@ param knownClientAppId string = ''
 @description('Object ID of the container app user assigned managed identity. Required when isServer is true.')
 param acaManagedIdentityObjectId string = ''
 
+@description('Service Management Reference for the Entra Application. Optional GUID used to link the app to a service in Azure.')
+param serviceManagementReference string = ''
+
 var scopeId = guid(entraAppUniqueName, entraAppScopeValue)
 
 resource entraApp 'Microsoft.Graph/applications@v1.0' = {
   uniqueName: entraAppUniqueName 
   displayName: entraAppDisplayName
-  serviceManagementReference: '2f3ca24b-3558-45f8-956b-648d589de813'
+  serviceManagementReference: !empty(serviceManagementReference) ? serviceManagementReference : null
   api: isServer ? {
     oauth2PermissionScopes: [
       {
