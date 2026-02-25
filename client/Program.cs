@@ -9,22 +9,35 @@ using Microsoft.Extensions.Configuration;
 using ModelContextProtocol.Client;
 
 // main:start
+var environment = Environment.GetEnvironmentVariable("DOTNET_ENVIRONMENT") ?? "Production";
+
 var configuration = new ConfigurationBuilder()
         .SetBasePath(Directory.GetCurrentDirectory())
         .AddJsonFile("appsettings.json", optional: false)
+        .AddJsonFile($"appsettings.{environment}.json", optional: true)
+        .AddCommandLine(args)
         .Build();
+
+var listAccounts = configuration.GetValue<bool?>("list-accounts") ?? false;
+
 var mcpServerUrl = GetMcpServerUrl(configuration);
 Console.WriteLine($"MCP Server: {mcpServerUrl}");
 
 var (scopes, tenantId) = await GetOAuthProtectedResourceMetadataAsync(mcpServerUrl);
 var clientId = configuration["EntraClientClientId"];
+
+if (string.IsNullOrEmpty(clientId))
+{
+    throw new InvalidOperationException("EntraClientClientId is not configured");
+}
+
 var accessToken = await GetAccessTokenAsync(clientId, tenantId, scopes);
 
 var client = new HttpClient
 {
     DefaultRequestHeaders = { Authorization = new AuthenticationHeaderValue("Bearer", accessToken) }
 };
-
+    
 var transport = new HttpClientTransport(new HttpClientTransportOptions
 {
     Endpoint = new Uri(mcpServerUrl),
@@ -65,14 +78,19 @@ else
 // main:end
 
 // tool-call:start
-bool shouldCallTool = false;
-if (shouldCallTool)
+if (listAccounts)
 {
     Console.WriteLine("\n--- Calling storage_account_get Tool ---");
 
-    var toolCallArgs = new Dictionary<string, object>
+    var subscriptionId = configuration["SubscriptionId"];
+    if (string.IsNullOrEmpty(subscriptionId))
     {
-        { "subscription", "<your_subscription_id>" }
+        throw new InvalidOperationException("SubscriptionId is not configured");
+    }
+
+    var toolCallArgs = new Dictionary<string, object?>
+    {
+        { "subscription", subscriptionId }
     };
 
     var toolResult = await mcpClient.CallToolAsync("storage_account_get", toolCallArgs);
