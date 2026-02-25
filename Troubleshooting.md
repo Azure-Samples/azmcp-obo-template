@@ -43,4 +43,16 @@ This means the server's OBO token exchange failed because **admin consent has no
 
 This occurs when redeploying (`azd up`) an existing Entra app registration that was originally created without a `serviceManagementReference`. The Microsoft Graph API now requires this field on updates.
 
-**Fix:** In the Azure Portal, find the app registration → **Branding & properties** → set **Service Management Reference** to a valid GUID, then re-run `azd up`.
+**Fix:** Pass the GUID via the `serviceManagementReference` parameter. Add it to [infra/main.parameters.json](infra/main.parameters.json):
+
+```json
+{
+  "parameters": {
+    "serviceManagementReference": {
+      "value": "<your-guid>"
+    }
+  }
+}
+```
+
+Then re-run `azd up`. You can generate a GUID or use an existing one — it just needs to be a valid GUID. See the [TSG](https://aka.ms/service-management-reference-error) for details.
