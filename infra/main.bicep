@@ -13,6 +13,9 @@ param entraAppClientDisplayName string
 @description('Application Insights connection string. Use "DISABLED" to disable telemetry, or provide existing connection string. If omitted, new App Insights will be created.')
 param appInsightsConnectionString string = ''
 
+@description('Service Management Reference GUID for the Entra Applications. Optional.')
+param serviceManagementReference string = ''
+
 // Deploy Application Insights if appInsightsConnectionString is empty and not DISABLED
 var appInsightsName = '${acaName}-insights'
 
@@ -41,6 +44,7 @@ module entraAppClient 'modules/entra-app.bicep' = {
     entraAppDisplayName: entraAppClientDisplayName
     entraAppUniqueName: entraAppClientUniqueName
     isServer: false
+    serviceManagementReference: serviceManagementReference
   }
 }
 
@@ -51,22 +55,13 @@ module entraAppServer 'modules/entra-app.bicep' = {
     entraAppDisplayName: entraAppServerDisplayName
     entraAppUniqueName: entraAppServerUniqueName
     isServer: true
+    serviceManagementReference: serviceManagementReference
     entraAppScopeValue: 'Mcp.Tools.ReadWrite'
     entraAppScopeDisplayName: 'Azure MCP Storage Tools ReadWrite'
     entraAppScopeDescription: 'Azure MCP Storage Tools Permission to call tools'
     knownClientAppId: entraAppClient.outputs.entraAppClientId
-  }
-}
-
-module entraAppServerFederatedCredential 'modules/entra-app-federated-credential.bicep' = {
-  name: 'entra-app-server-federated-credential-deployment'
-  params: {
-    entraAppUniqueName: entraAppServerUniqueName
     acaManagedIdentityObjectId: acaStorageManagedIdentity.outputs.managedIdentityPrincipalId
   }
-  dependsOn: [
-    entraAppServer
-  ]
 }
 
 // Deploy ACA Infrastructure to host Azure MCP Server
