@@ -32,6 +32,9 @@ param entraAppScopeDescription string = ''
 @description('Known client app id')
 param knownClientAppId string = ''
 
+// VS Code client app ID for pre-authorization
+var vsCodeClientAppId = 'aebc6443-996d-45c2-90f0-388ff96faa56'
+
 @description('Object ID of the container app user assigned managed identity. Required when isServer is true.')
 param acaManagedIdentityObjectId string = ''
 
@@ -60,6 +63,12 @@ resource entraApp 'Microsoft.Graph/applications@v1.0' = {
     preAuthorizedApplications: [
       {
         appId: knownClientAppId
+        delegatedPermissionIds: [
+          scopeId
+        ]
+      }
+      {
+        appId: vsCodeClientAppId
         delegatedPermissionIds: [
           scopeId
         ]
@@ -96,6 +105,18 @@ resource entraApp 'Microsoft.Graph/applications@v1.0' = {
     ]
   } : null
   isFallbackPublicClient: !isServer
+}
+
+resource entraAppUpdate 'Microsoft.Graph/applications@v1.0' = if (isServer) {
+  uniqueName: entraAppUniqueName
+  displayName: entraAppDisplayName
+  serviceManagementReference: !empty(serviceManagementReference) ? serviceManagementReference : null
+  identifierUris: ['api://${entraApp.appId}']
+  api: {
+    oauth2PermissionScopes: entraApp.api.oauth2PermissionScopes
+    preAuthorizedApplications: entraApp.api.preAuthorizedApplications
+    requestedAccessTokenVersion: 2
+  }
 }
 
 // Create a service principal for the app so it can be used for authentication in this tenant

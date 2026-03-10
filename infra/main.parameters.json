@@ -16,6 +16,9 @@
     },
     "appInsightsConnectionString": {
       "value": ""
+    },
+    "serviceManagementReference": {
+      "value": ""
     }
   }
 }
