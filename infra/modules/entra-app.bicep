@@ -38,6 +38,9 @@ var vsCodeClientAppId = 'aebc6443-996d-45c2-90f0-388ff96faa56'
 @description('Object ID of the container app user assigned managed identity. Required when isServer is true.')
 param acaManagedIdentityObjectId string = ''
 
+@description('The FIC token exchange audience URI. Varies by cloud: api://AzureADTokenExchange (public), api://AzureADTokenExchangeUSGov (US Gov), api://AzureADTokenExchangeChina (China).')
+param tokenExchangeAudience string = 'api://AzureADTokenExchange'
+
 @description('Service Management Reference for the Entra Application. Optional GUID used to link the app to a service in Azure.')
 param serviceManagementReference string = ''
 
@@ -129,7 +132,7 @@ resource servicePrincipal 'Microsoft.Graph/servicePrincipals@v1.0' = {
 resource federatedIdentityCredential 'Microsoft.Graph/applications/federatedIdentityCredentials@v1.0' = if (isServer) {
   name: '${entraApp.uniqueName}/ServerClientCredential'
   audiences: [
-    'api://AzureADTokenExchange'
+    tokenExchangeAudience
   ]
   description: 'Client credential of Azure MCP server app registration'
   issuer: '${environment().authentication.loginEndpoint}${tenant().tenantId}/v2.0'

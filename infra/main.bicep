@@ -16,6 +16,14 @@ param appInsightsConnectionString string = ''
 @description('Service Management Reference GUID for the Entra Applications. Optional.')
 param serviceManagementReference string = ''
 
+// Derive the FIC token exchange audience based on the target cloud.
+// See https://learn.microsoft.com/en-us/entra/workload-id/workload-identity-federation-config-app-trust-managed-identity
+var tokenExchangeAudience = environment().name == 'AzureUSGovernment'
+  ? 'api://AzureADTokenExchangeUSGov'
+  : environment().name == 'AzureChinaCloud'
+    ? 'api://AzureADTokenExchangeChina'
+    : 'api://AzureADTokenExchange'
+
 // Deploy Application Insights if appInsightsConnectionString is empty and not DISABLED
 var appInsightsName = '${acaName}-insights'
 
@@ -61,6 +69,7 @@ module entraAppServer 'modules/entra-app.bicep' = {
     entraAppScopeDescription: 'Azure MCP Storage Tools Permission to call tools'
     knownClientAppId: entraAppClient.outputs.entraAppClientId
     acaManagedIdentityObjectId: acaStorageManagedIdentity.outputs.managedIdentityPrincipalId
+    tokenExchangeAudience: tokenExchangeAudience
   }
 }
 
@@ -78,6 +87,7 @@ module acaInfrastructure 'modules/aca-infrastructure.bicep' = {
     namespaces: ['storage']
     userAssignedManagedIdentityId: acaStorageManagedIdentity.outputs.managedIdentityId
     userAssignedManagedIdentityClientId: acaStorageManagedIdentity.outputs.managedIdentityClientId
+    tokenExchangeAudience: tokenExchangeAudience
   }
 }
 

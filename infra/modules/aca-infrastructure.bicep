@@ -48,6 +48,9 @@ param userAssignedManagedIdentityId string = ''
 @description('Client ID of the user-assigned managed identity')
 param userAssignedManagedIdentityClientId string = ''
 
+@description('The FIC token exchange audience URI. Varies by cloud: api://AzureADTokenExchange (public), api://AzureADTokenExchangeUSGov (US Gov), api://AzureADTokenExchangeChina (China).')
+param tokenExchangeAudience string = 'api://AzureADTokenExchange'
+
 var baseArgs = [
   '--transport'
   'http'
@@ -142,6 +145,10 @@ resource containerApp 'Microsoft.App/containerApps@2024-03-01' = {
             {
               name: 'AzureAd__ClientCredentials__0__ManagedIdentityClientId'
               value: userAssignedManagedIdentityClientId
+            }
+            {
+              name: 'AzureAd__ClientCredentials__0__TokenExchangeUrl'
+              value: tokenExchangeAudience
             }
             {
               name: 'AZURE_LOG_LEVEL'
