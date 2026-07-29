@@ -2,6 +2,8 @@
 
 Deploy the [Azure MCP Server 2.0-beta](https://mcr.microsoft.com/product/azure-sdk/azure-mcp) as a remote, HTTPS-accessible MCP server on Azure Container Apps. Clients such as [Microsoft Foundry](https://azure.microsoft.com/products/ai-foundry) agents and [Microsoft Copilot Studio](https://www.microsoft.com/microsoft-copilot/microsoft-copilot-studio) can securely invoke MCP tools that perform Azure operations on the user's behalf via the OBO flow.
 
+> If you have feedback for this template, please open an issue in the [microsoft/mcp](https://github.com/microsoft/mcp) repo.
+
 ## Prerequisites
 
 - Azure subscription with **Owner** or **User Access Administrator** permissions
